@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itcast.mapper.OrderSettingMapper">
+<!-- 插入预约设置-->
+    <insert id="editOrderSetting" parameterType="OrderSetting">
+       insert into `t_ordersetting` (orderDate,number,reservations) values (#{orderDate},#{number},#{reservations})
+    </insert>
+<!-- 更新预约设置 -->
+    <update id="updateOrderSetting" parameterType="OrderSetting">
+     update `t_ordersetting`
+     <set>
+         <if test="number !=null">
+             number = #{number}
+         </if>
+         where orderDate = #{orderDate}
+     </set>
+    </update>
+
+    <delete id="deleteOderSetting" parameterType="string">
+        DELETE FROM t_ordersetting WHERE orderDate &lt;= #{value};
+    </delete>
+    <!-- 查询预约设置-->
+    <select id="findNumberByorderDate" resultType="java.lang.Integer" parameterType="OrderSetting">
+      select count(*) from `t_ordersetting` where orderDate = #{orderDate}
+    </select>
+<!-- 通过给定的日期，查询预约设置数据-->
+    <select id="findOrderSettingBydate" resultType="OrderSetting" parameterType="hashmap">
+        select * from `t_ordersetting` where  orderDate between #{begin} and #{end}
+    </select>
+<!-- 通过给定的日期查找预约设置并且返回预约设置对象-->
+    <select id="findOrderSettingByDate" resultType="OrderSetting" parameterType="date">
+        select * from  `t_ordersetting` where orderDate = #{date}
+    </select>
+    <select id="findOderSetting" resultType="cn.itcast.pojo.OrderSetting" parameterType="string">
+        select * from t_ordersetting where orderDate &lt;=#{value}
+    </select>
+    <!--更新已预约人数-->
+    <update id="editReservationsByOrderDate" parameterType="OrderSetting">
+        update t_ordersetting set reservations = #{reservations} where orderDate = #{orderDate}
+    </update>
+</mapper>

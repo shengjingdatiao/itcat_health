@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itcast.mapper.CheckItemMapper">
+<!-- 添加检查项-->
+    <insert id="add" parameterType="checkItem">
+      insert into t_checkitem(code,name,sex,age,price,type,remark,attention)values(#{code},#{name},#{sex},#{age},#{price},#{type},#{remark},#{attention})
+    </insert>
+
+    <!--分页检查项查询-->
+    <select id="findPage" parameterType="String" resultType="checkItem">
+        select * from t_checkitem
+        <if test="value !=null and value.length>0">
+            where code = #{value} or name = #{value}
+        </if>
+    </select>
+<!--查询检查组和检查项之间的数据-->
+    <select id="findCheckItem_Checkgroup" resultType="long" parameterType="int">
+        select count(*) from `t_checkgroup_checkitem` where checkitem_id = #{id}
+    </select>
+<!--   根据id删除检查项-->
+    <delete id="deleteCheckItem" parameterType="int">
+           delete from t_checkitem where id = #{id}
+    </delete>
+<!--    根据id查询检查项，进行数据回写-->
+    <select id="findCheckItemById" parameterType="int" resultType="checkItem">
+        select * from t_checkitem where id = #{id}
+    </select>
+<!-- 查询所有检查项的数据，进行对新增检查组检查项信息的回写-->
+    <select id="findAll" resultType="CheckItem">
+        select * from t_checkitem
+    </select>
+    <!-- 根据id编辑检查项数据-->
+    <update id="editCheckItemByid" parameterType="CheckItem">
+        update t_checkitem
+        <set>
+            <if test="code !=null">
+                code=#{code},
+            </if>
+            <if test="name !=null">
+                name=#{name},
+            </if>
+            <if test="sex !=null">
+                sex=#{sex},
+            </if>
+            <if test="age !=null">
+                age=#{age},
+            </if>
+            <if test="price !=null">
+                price=#{price},
+            </if>
+            <if test="type !=null">
+                type=#{type},
+            </if>
+            <if test="remark !=null">
+                remark=#{remark},
+            </if>
+            <if test="attention !=null">
+                attention=#{attention}
+            </if>
+            where id = #{id}
+        </set>
+    </update>
+    <select id="findAllcheckItemsBycheckgroupId" resultType="CheckItem">
+        SELECT * FROM t_checkitem WHERE id IN (SELECT checkitem_id FROM `t_checkgroup_checkitem` WHERE checkgroup_id =#{id})
+    </select>
+</mapper>

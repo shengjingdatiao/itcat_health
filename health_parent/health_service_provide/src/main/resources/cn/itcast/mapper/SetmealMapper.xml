@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itcast.mapper.SetmealMapper">
+<!-- 添加套餐数据-->
+    <insert id="addSetMel" parameterType="Setmeal">
+        <selectKey order="AFTER" resultType="java.lang.Integer" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_setmeal (code,name,sex,age,helpCode,price,remark,attention,img) values(#{code},#{name},#{sex},#{age},#{helpCode},#{price},#{remark},#{attention},#{img})
+    </insert>
+    <!-- 添加中间表对应的关系-->
+    <insert id="addSetMealIdAndcheckGroupId" parameterType="hashmap">
+        insert into `t_setmeal_checkgroup` values (#{SetMealId},#{checkGroupId})
+    </insert>
+<!-- 更新套餐数据-->
+    <update id="editSetMel" parameterType="Setmeal">
+        update  t_setmeal
+        <set>
+            <if test="code !=null">
+                code=#{code},
+            </if>
+            <if test="name !=null">
+                name=#{name},
+            </if>
+            <if test="sex !=null">
+                sex=#{sex},
+            </if>
+            <if test="helpCode !=null">
+                helpCode=#{helpCode},
+            </if>
+            <if test="price !=null">
+                price=#{price},
+            </if>
+            <if test="age !=null">
+                age=#{age},
+            </if>
+            <if test="remark !=null">
+                remark=#{remark},
+            </if>
+            <if test="attention !=null">
+                attention=#{attention}
+            </if>
+            where id = #{id}
+        </set>
+    </update>
+<!-- 删除套餐数据-->
+    <delete id="deleteSetMel" parameterType="int">
+        delete from t_setmeal where id = #{id}
+    </delete>
+<!-- 删除中间表关系-->
+    <delete id="deleteSetMealAndCheckgroup" parameterType="int">
+        delete from `t_setmeal_checkgroup`  where setmeal_id = #{id}
+    </delete>
+
+    <!--查询所有的检查组-->
+    <select id="findAll" resultType="CheckGroup">
+        select * from t_checkgroup
+    </select>
+<!--分页查询-->
+    <select id="findAllSetMel" resultType="Setmeal" parameterType="string">
+        select * from t_setmeal
+        <if test="value !=null and value.length>0 and value !=''">
+            where name=#{value} or code=#{value} or helpCode=#{value}
+        </if>
+    </select>
+    <select id="findSetMelById" resultType="Setmeal" parameterType="int">
+        select * from t_setmeal where id = #{id}
+    </select>
+    <select id="findAllSetMelAndCheckGroup" resultType="java.lang.Integer" parameterType="int">
+        select checkgroup_id from `t_setmeal_checkgroup` where setmeal_id = #{id}
+    </select>
+<!-- 移动端查询所有套餐信息-->
+    <select id="findAllSetmeal" resultType="Setmeal">
+        select * from t_setmeal;
+    </select>
+<!-- 根据id查询套餐信息-->
+<!--首先根据id查询出对应的套餐项数据-->
+    <select id="findById"  resultMap="findSetmeal">
+        select * from t_setmeal where id = #{id}
+    </select>
+    <select id="findSetmealNameAndCount" resultType="java.util.Map">
+      SELECT ts.`name`,COUNT(tor.`setmeal_id`) value FROM t_order tor,t_setmeal ts WHERE tor.`setmeal_id` = ts.`id` GROUP BY (ts.`name`)
+    </select>
+    <!-- -->
+    <resultMap id="findBaseSetmeal" type="Setmeal">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="code" property="code"></result>
+        <result column="helpCode" property="helpCode"></result>
+        <result column="sex" property="sex"></result>
+        <result column="age" property="age"></result>
+        <result column="price" property="price"></result>
+        <result column="remark" property="remark"></result>
+        <result column="attention" property="attention"></result>
+        <result column="img" property="img"></result>
+    </resultMap>
+    <resultMap id="findSetmeal" type="Setmeal" extends="findBaseSetmeal">
+        <collection property="checkGroups"
+                    column="id"
+                    javaType="ArrayList"
+                    ofType="CheckGroup"
+                    select="cn.itcast.mapper.CheckgroupMapper.findCheckgroupById">
+        </collection>
+    </resultMap>
+</mapper>
