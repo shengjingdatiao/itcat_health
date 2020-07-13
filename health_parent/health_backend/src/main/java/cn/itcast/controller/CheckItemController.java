@@ -89,8 +89,5 @@ public class CheckItemController {
             return  new Result(false,MessageConstant.QUERY_CHECKITEM_FAIL);
         }
     }
-    //添加测试方法
-    // 赵东东
-    //测试需求
-    //测试
+    //测试git
 }
