@@ -91,4 +91,5 @@ public class CheckgroupController {
           return   new Result(false, MessageConstant.DELETE_CHECKGROUP_FAIL);
         }
     }
+    //git 代码冲突了
 }
