@@ -89,4 +89,5 @@ public class CheckItemController {
             return  new Result(false,MessageConstant.QUERY_CHECKITEM_FAIL);
         }
     }
+    //添加测试方法
 }
